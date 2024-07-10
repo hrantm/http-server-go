@@ -30,24 +30,20 @@ func main() {
 		fmt.Println("Error reading from connection: ", err.Error())
 		os.Exit(1)
 	}
-	s := string(buff[:n])
-	reqLine := strings.Split(s, "\r\n")
-	target := strings.Split(reqLine[0], " ")[1]
+	req := string(buff[:n])
 
-	if target == "/" {
-
+	if strings.HasPrefix(string(req), "GET / HTTP/1.1") {
 		_, err = conn.Write([]byte("HTTP/1.1 200 OK\r\n\r\n"))
 		if err != nil {
 			fmt.Println("Error writing to connection: ", err.Error())
 			os.Exit(1)
 		}
-	}
-
-	if len(target) > 1 {
+	} else {
 		_, err = conn.Write([]byte("HTTP/1.1 404 Not Found\r\n\r\n"))
 		if err != nil {
 			fmt.Println("Error writing to connection: ", err.Error())
 			os.Exit(1)
 		}
 	}
+
 }
