@@ -30,9 +30,8 @@ func main() {
 		fmt.Println("Error reading from connection: ", err.Error())
 		os.Exit(1)
 	}
-	req := string(buff[:n])
 
-	if strings.HasPrefix(string(req), "GET / HTTP/1.1") {
+	if strings.HasPrefix(string(buff[:n]), "GET / HTTP/1.1") {
 		_, err = conn.Write([]byte("HTTP/1.1 200 OK\r\n\r\n"))
 		if err != nil {
 			fmt.Println("Error writing to connection: ", err.Error())
