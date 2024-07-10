@@ -30,9 +30,21 @@ func main() {
 		fmt.Println("Error reading from connection: ", err.Error())
 		os.Exit(1)
 	}
+	req := string(buff[:n])
+	// fmt.Println(req)
 
-	if strings.HasPrefix(string(buff[:n]), "GET / HTTP/1.1") {
+	if strings.HasPrefix(req, "GET / HTTP/1.1") {
 		_, err = conn.Write([]byte("HTTP/1.1 200 OK\r\n\r\n"))
+		if err != nil {
+			fmt.Println("Error writing to connection: ", err.Error())
+			os.Exit(1)
+		}
+	} else if strings.HasPrefix(req, "GET /echo/") {
+		reqLines := strings.Split(req, "\r\n")
+		target := strings.Split(reqLines[0], " ")[1]
+		responseBody := strings.Split(target, "/")[2]
+		message := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %v\r\n\r\n%v", len(responseBody), responseBody)
+		_, err = conn.Write([]byte(message))
 		if err != nil {
 			fmt.Println("Error writing to connection: ", err.Error())
 			os.Exit(1)
