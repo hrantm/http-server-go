@@ -44,6 +44,7 @@ func main() {
 		reqLines := strings.Split(req, "\r\n")
 		userAgent := strings.Split(reqLines[3], " ")[1]
 		message := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %v\r\n\r\n%v", len(userAgent), userAgent)
+
 		_, err = conn.Write([]byte(message))
 		if err != nil {
 			fmt.Println("Error writing to connection: ", err.Error())
