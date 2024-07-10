@@ -42,7 +42,13 @@ func main() {
 	} else if strings.HasPrefix(req, "GET /user-agent") {
 
 		reqLines := strings.Split(req, "\r\n")
-		userAgent := strings.Split(reqLines[3], " ")[1]
+		var userAgent string
+		for _, v := range reqLines {
+			if strings.HasPrefix(v, "User-Agent") {
+				userAgent = strings.Split(v, " ")[1]
+			}
+		}
+
 		message := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %v\r\n\r\n%v", len(userAgent), userAgent)
 
 		_, err = conn.Write([]byte(message))
