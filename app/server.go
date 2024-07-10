@@ -16,12 +16,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	conn, err := l.Accept()
-
-	if err != nil {
-		fmt.Println("Error accepting connection: ", err.Error())
-		os.Exit(1)
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			fmt.Println("Error accepting connection: ", err.Error())
+			os.Exit(1)
+		}
+		processRequest(conn)
 	}
+
+}
+
+func processRequest(conn net.Conn) {
+
 	defer conn.Close()
 
 	buff := make([]byte, 1024)
@@ -73,5 +80,4 @@ func main() {
 			os.Exit(1)
 		}
 	}
-
 }
