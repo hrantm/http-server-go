@@ -46,6 +46,26 @@ func processRequest(conn net.Conn) {
 			os.Exit(1)
 		}
 
+	} else if strings.HasPrefix(req, "GET /files/") {
+		reqLines := strings.Split(req, "\r\n")
+		target := strings.Split(reqLines[0], " ")[1]
+		filename := strings.Split(target, "/")[2]
+		path := "/tmp/data/codecrafters.io/http-server-tester/" + filename
+		var message string
+		// Read the entire file
+		fileInfo, err := os.Stat(path)
+		if err != nil {
+			message = "HTTP/1.1 404 Not Found\r\n\r\n"
+		} else {
+			data, _ := os.ReadFile(path)
+			message = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %v\r\n\r\n%v", fileInfo.Size(), string(data))
+		}
+		_, err = conn.Write([]byte(message))
+		if err != nil {
+			fmt.Println("Error writing to connection: ", err.Error())
+			os.Exit(1)
+		}
+
 	} else if strings.HasPrefix(req, "GET /user-agent") {
 
 		reqLines := strings.Split(req, "\r\n")
