@@ -93,6 +93,18 @@ func processRequest(conn net.Conn) {
 			fmt.Println("Error writing to connection: ", err.Error())
 			os.Exit(1)
 		}
+	} else if strings.HasPrefix(req, "POST") {
+		reqLines := strings.Split(req, "\r\n")
+
+		body := reqLines[5]
+		filename := strings.Split(strings.Split(reqLines[0], " ")[1], "/")[2]
+		path := "/tmp/data/codecrafters.io/http-server-tester/" + filename
+		f, _ := os.Create(path)
+		defer f.Close()
+		f.WriteString(body)
+
+		conn.Write([]byte("HTTP/1.1 201 Created\r\n\r\n"))
+
 	} else {
 		_, err = conn.Write([]byte("HTTP/1.1 404 Not Found\r\n\r\n"))
 		if err != nil {
